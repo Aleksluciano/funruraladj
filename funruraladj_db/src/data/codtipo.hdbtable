@@ -1,0 +1,8 @@
+ROW TABLE "funruraladj.funruraladj_db.data::CODTIPO" (
+     "ITEM_INCENTIVO" NVARCHAR(20) COMMENT 'Item incentivo',
+	 "CODIGO_IRF" NVARCHAR(2) COMMENT 'Código IRF',
+	 "CAT_IMPOSTO" NVARCHAR(2) COMMENT 'Tipo imposto',
+	 "DT_INI" NVARCHAR(8) COMMENT 'Data de referência inicial',
+	 "DT_FIN" NVARCHAR(8) COMMENT 'Data de referência final',
+	 PRIMARY KEY ("ITEM_INCENTIVO","CODIGO_IRF","CAT_IMPOSTO","DT_INI"))
+	 COMMENT 'Parâmetros para determinar código e tipo de imposto'

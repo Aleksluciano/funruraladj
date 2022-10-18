@@ -1,0 +1,88 @@
+{
+	"sap.app": {
+		"id": "funruraladj_ui",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"crossNavigation": {
+			"inbounds": {
+				"funruraladj_uiShow": {
+					"title": "funruraladj_ui",
+					"icon": "sap-icon://share-2",
+					"semanticObject": "funruraladj_ui",
+					"action": "show",
+					"deviceTypes": {
+						"desktop": true,
+						"tablet": true,
+						"phone": true
+					}
+				}
+			},
+			"outbounds": {}
+		}
+	},
+	"sap.ui5": {
+		"_version": "1.2.0",
+		"componentName": "funruraladj_ui",
+		"rootView": {
+			"viewName": "funruraladj_ui.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"type": "View",
+				"viewType": "XML",
+				"path": "funruraladj_ui",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"async": true
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "appPage",
+				"target": "page"
+			}, {
+				"pattern": "table",
+				"name": "appTable",
+				"target": "table"
+			}, {
+				"pattern": "table2",
+				"name": "appTable2",
+				"target": "table2"
+			}],
+			"targets": {
+				"page": {
+					"id": "page",
+					"name": "Page",
+					"level": 1
+				},
+				"table": {
+					"id": "table",
+					"name": "Table",
+					"transition": "slide"
+				},
+				"table2": {
+					"id": "table2",
+					"name": "Table2",
+					"transition": "slide"
+				}
+			}
+		}
+	},
+	"sap.platform.cf": {},
+	"sap.platform.runtime": {
+		"componentProperties": {
+			"url": "/"
+		}
+	}
+}

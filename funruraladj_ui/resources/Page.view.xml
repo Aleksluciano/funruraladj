@@ -1,0 +1,213 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" displayBlock="true"
+	controllerName="funruraladj_ui.Page" core:require="{ Float: 'sap/ui/model/type/Float' }">
+	<Shell>
+		<App>
+			<pages>
+				<Page title="Funrural" titleLevel="H1" showHeader="true" class="sapUiContentPadding">
+					<Panel width="auto" class="sapUiResponsiveMargin">
+						<content >
+							<HBox justifyContent="SpaceAround">
+								<VBox>
+									<Label required="true" text="Empresa:" labelFor="input-company"/>
+									<ComboBox change=".changeCompany()" id="input-company" selectedKey="{/SelectedCompany}"
+										items="{ path: '/CompanyCollection', sorter: { path: 'Name' } }">
+										<core:Item key="{Id}" text="{Name}"/>
+									</ComboBox>
+								</VBox>
+								<VBox>
+									<Label required="true" text="Estab:" labelFor="input-branch"/>
+									<ComboBox id="input-brancha" selectedKey="{/SelectedBranch}" items="{ path: '/BranchCollection', sorter: { path: 'Name' } }">
+										<core:Item key="{Id}" text="{Name}"/>
+									</ComboBox>
+								</VBox>
+								<VBox>
+									<Label required="true" text="Entrada/Saída:" labelFor="input-entsai"/>
+									<ComboBox id="input-entsai" selectedKey="{/SelectedEntsai}" items="{ path: '/EntsaiCollection', sorter: { path: 'Name' } }">
+										<core:Item key="{Id}" text="{Name}"/>
+									</ComboBox>
+								</VBox>
+								<VBox>
+									<Label required="true" text='Período:' labelFor="DP10"/>
+									<DatePicker id="DP10" value="{/SelectedPeriod}" displayFormat="MM-y" change="handleChange" class="sapUiSmallMarginBottom disabled"/>
+								</VBox>
+								<l:VerticalLayout class="sapUiContentPadding" width="100%">
+									<l:dependents>
+										<core:Fragment fragmentName="funruraladj_ui.BusyDialog" type="XML"/>
+									</l:dependents>
+								</l:VerticalLayout>
+							</HBox>
+							<HBox justifyContent="SpaceBetween" width="19%">
+								<VBox>
+									<Label required="true" labelFor="btnvig" text='Parâmetro:' class="paramMargin"/>
+									<Button id="btnvig" press=".onTable" icon="sap-icon://action-settings" text="Vigência" class="paramMargin"/>
+								</VBox>
+								<VBox>
+									<Label required="true" labelFor="btncod" text='Parâmetro:'/>
+									<Button id="btncod" press=".onTable2" icon="sap-icon://action-settings" text="Códigos"/>
+								</VBox>
+							</HBox>
+						</content>
+					</Panel>
+					<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
+						<ScrollContainer>
+							<content>
+								<Table items="{ path: '/ALV1'}" id="tableAlv1" fixedLayout="false">
+									<columns >
+										<Column >
+											<Text text="Empresa" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="Filial" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="ID NF" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="N. DocF" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="Série DocF" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="Dt.doc" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="Data" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="Ent/Saída" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="Código partc." wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="CNPJ ou CPF" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="Nome" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="Cód.CFOP" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="VlTotDocto" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="VrSENAR" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="VrFUNFURAL" wrapping="false"/>
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem >
+											<cells>
+												<Text text="{EMPRESA}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{FILIAL}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{NF_ID}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{NUM_DOC}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{SER}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{DT_DOC}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{DT_E_S}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{DIRECT}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{COD_PART}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{CA_CNPJ_CPF}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{NOME}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{CFOP}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{ path: 'VL_ITEM', type: 'Float', formatOptions: { maxFractionDigits: 2 } }" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{ path: 'VL_SENAR', type: 'Float', formatOptions: { maxFractionDigits: 2 } }" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{ path: 'VL_FUNRURAL', type: 'Float', formatOptions: { maxFractionDigits: 2 } }" wrapping="false"/>
+											</cells>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</content>
+						</ScrollContainer>
+						<ScrollContainer>
+							<content>
+								<Table items="{ path: '/ALV2'}" id="tableAlv2" fixedLayout="false">
+									<columns >
+										<Column >
+											<Text text="Código partc." wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="Nome" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="VlTotDocto" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="VrSENAR" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="VrFUNFURAL" wrapping="false"/>
+										</Column>
+										<Column >
+											<Text text="VrFUN+SEN" wrapping="false"/>
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem >
+											<cells>
+												<Text text="{COD_PART}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{NOME}" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{ path: 'VL_ITEM', type: 'Float', formatOptions: { maxFractionDigits: 2 } }" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{ path: 'VL_SENAR', type: 'Float', formatOptions: { maxFractionDigits: 2 } }" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{ path: 'VL_FUNRURAL', type: 'Float', formatOptions: { maxFractionDigits: 2 } }" wrapping="false"/>
+											</cells>
+											<cells>
+												<Text text="{ path: 'CA_VL_TOT_FUN_SEN', type: 'Float', formatOptions: { maxFractionDigits: 2 } }" wrapping="false"/>
+											</cells>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</content>
+						</ScrollContainer>
+					</Panel>
+					<footer>
+						<OverflowToolbar>
+							<ToolbarSpacer/>
+							<Button type="Emphasized" text="Gerar" press="onPress"/>
+						</OverflowToolbar>
+					</footer>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>

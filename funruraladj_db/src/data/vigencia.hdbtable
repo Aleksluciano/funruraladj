@@ -1,0 +1,7 @@
+ROW TABLE "funruraladj.funruraladj_db.data::VIGENCIA" (
+     "EMPRESA" NVARCHAR(4) COMMENT 'Empresa',
+	 "FILIAL" NVARCHAR(4) COMMENT 'Filial',
+	 "DT_INI" NVARCHAR(8) COMMENT 'Data de referência inicial',
+	 "DT_FIN" NVARCHAR(8) COMMENT 'Data de referência final',
+	 PRIMARY KEY ("EMPRESA","FILIAL","DT_INI"))
+	 COMMENT 'Parâmetros para determinar vigência'

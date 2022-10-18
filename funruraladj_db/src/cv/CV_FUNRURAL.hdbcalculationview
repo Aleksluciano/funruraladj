@@ -1,0 +1,778 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="CV_FUNRURAL" applyPrivilegeType="NONE" dataCategory="DIMENSION" dimensionType="STANDARD" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="CV_FUNRURAL"/>
+<localVariables>
+  <variable id="P_EMP" parameter="true">
+    <descriptions defaultDescription="Company code"/>
+    <variableProperties datatype="NVARCHAR" length="4" mandatory="true" defaultValue="">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="SingleValue"/>
+    </variableProperties>
+  </variable>
+  <variable id="P_FILIAL" parameter="true">
+    <descriptions defaultDescription="Branch"/>
+    <variableProperties datatype="NVARCHAR" length="4" mandatory="false" defaultValue="">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="SingleValue"/>
+    </variableProperties>
+  </variable>
+  <variable id="P_DT_INI" parameter="true">
+    <descriptions defaultDescription="Initial date"/>
+    <variableProperties datatype="NVARCHAR" length="8" mandatory="true" defaultValue="">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="SingleValue"/>
+    </variableProperties>
+  </variable>
+  <variable id="P_DT_FIN" parameter="true">
+    <descriptions defaultDescription="Final date"/>
+    <variableProperties datatype="NVARCHAR" length="8" mandatory="true" defaultValue="">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="SingleValue"/>
+    </variableProperties>
+  </variable>
+  <variable id="P_DIRECT" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="NVARCHAR" length="1" mandatory="false" defaultValue="">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="SingleValue"/>
+    </variableProperties>
+  </variable>
+
+  <variable id="P_MANDT_TDF" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="NVARCHAR" length="3" mandatory="false" defaultValue="">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="SingleValue"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="adejo.table::VIGENCIA">
+    <resourceUri>adejo.table::VIGENCIA</resourceUri>
+  </DataSource>
+  <DataSource id="adejo.view::/TMF/V_EMP_FED">
+    <resourceUri>adejo.view::/TMF/V_EMP_FED</resourceUri>
+  </DataSource>
+  <DataSource id="adejo.view::/TMF/V_NF_DOC">
+    <resourceUri>adejo.view::/TMF/V_NF_DOC</resourceUri>
+  </DataSource>
+  <DataSource id="adejo.view::NF_ITEM">
+    <resourceUri>adejo.view::NF_ITEM</resourceUri>
+  </DataSource>
+  <DataSource id="adejo.table::CODTIPO">
+    <resourceUri>adejo.table::CODTIPO</resourceUri>
+  </DataSource>
+  <DataSource id="adejo.view::NF_IMPOSTO_RETIDO">
+    <resourceUri>adejo.view::NF_IMPOSTO_RETIDO</resourceUri>
+  </DataSource>
+  <DataSource id="CV_PART_PROD_RURAL">
+    <resourceUri>CV_PART_PROD_RURAL</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="P_VIGENCIA" filterExpressionLanguage="COLUMN_ENGINE">
+    <viewAttributes>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="FILIAL"/>
+      <viewAttribute id="VIG_DE"/>
+      <viewAttribute id="VIG_ATE"/>
+    </viewAttributes>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="CA_EMPTY" datatype="NVARCHAR" length="1" expressionLanguage="COLUMN_ENGINE">
+        <formula>''</formula>
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
+    <input node="adejo.table::VIGENCIA">
+      <mapping xsi:type="Calculation:AttributeMapping" target="VIG_DE" source="DT_INI"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VIG_ATE" source="DT_FIN"/>
+    </input>
+    <filter>&quot;EMPRESA&quot;='$$P_EMP$$'and
+(&quot;FILIAL&quot; = '$$P_FILIAL$$'or
+'$$P_FILIAL$$'=&quot;CA_EMPTY&quot;)and
+&quot;VIG_DE&quot;&lt;='$$P_DT_INI$$' and
+&quot;VIG_ATE&quot;&gt;= '$$P_DT_FIN$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="J_EMP_FILIAL" cardinality="CN_N" joinType="inner" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="MANDT_TDF"/>
+      <viewAttribute id="MANDT"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="ESTABELECIMENTO"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="adejo.view::/TMF/V_EMP_FED">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MANDT_TDF" source="MANDT_TDF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MANDT" source="MANDT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="EMPRESA" source="EMPRESA"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ESTABELECIMENTO" source="ESTABELECIMENTO"/>
+    </input>
+    <input node="P_VIGENCIA">
+      <mapping xsi:type="Calculation:AttributeMapping" target="EMPRESA" source="EMPRESA"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ESTABELECIMENTO" source="FILIAL"/>
+    </input>
+    <filter>&quot;MANDT_TDF&quot;='$$P_MANDT_TDF$$'</filter>
+    <joinAttribute name="EMPRESA"/>
+    <joinAttribute name="ESTABELECIMENTO"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="J_NFDOCTO_ITEM" cardinality="C1_N" joinType="inner">
+    <viewAttributes>
+      <viewAttribute id="MANDT"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="FILIAL"/>
+      <viewAttribute id="NF_ID"/>
+      <viewAttribute id="NUM_DOC"/>
+      <viewAttribute id="SER"/>
+      <viewAttribute id="DT_DOC"/>
+      <viewAttribute id="DT_E_S"/>
+      <viewAttribute id="COD_PART"/>
+      <viewAttribute id="TIPO_PART"/>
+      <viewAttribute id="CFOP"/>
+      <viewAttribute id="VL_ITEM"/>
+      <viewAttribute id="DIRECT"/>
+      <viewAttribute id="CANCELADO"/>
+      <viewAttribute id="DOCSTAT"/>
+      <viewAttribute id="NUM_REF_LANCTO"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="adejo.view::/TMF/V_NF_DOC">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MANDT" source="MANDT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="EMPRESA" source="EMPRESA"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FILIAL" source="FILIAL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NF_ID" source="NF_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUM_DOC" source="NUM_DOC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SER" source="SER"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DT_DOC" source="DT_DOC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DT_E_S" source="DT_E_S"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COD_PART" source="COD_PART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIPO_PART" source="TIPO_PART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DIRECT" source="DIRECT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CANCELADO" source="CANCELADO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DOCSTAT" source="DOCSTAT"/>
+    </input>
+    <input node="adejo.view::NF_ITEM">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CFOP" source="CFOP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VL_ITEM" source="VL_ITEM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUM_REF_LANCTO" source="NUM_REF_LANCTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MANDT" source="MANDT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NF_ID" source="NF_ID"/>
+    </input>
+    <joinAttribute name="MANDT"/>
+    <joinAttribute name="NF_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="P_NF_DOC_ITEM" filterExpressionLanguage="COLUMN_ENGINE">
+    <viewAttributes>
+      <viewAttribute id="MANDT"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="FILIAL"/>
+      <viewAttribute id="NF_ID"/>
+      <viewAttribute id="NUM_DOC"/>
+      <viewAttribute id="SER"/>
+      <viewAttribute id="DT_DOC"/>
+      <viewAttribute id="DT_E_S"/>
+      <viewAttribute id="COD_PART"/>
+      <viewAttribute id="TIPO_PART"/>
+      <viewAttribute id="CFOP"/>
+      <viewAttribute id="VL_ITEM"/>
+      <viewAttribute id="DIRECT"/>
+      <viewAttribute id="CANCELADO"/>
+      <viewAttribute id="DOCSTAT"/>
+      <viewAttribute id="NUM_REF_LANCTO"/>
+    </viewAttributes>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="CA_EMPTY" datatype="NVARCHAR" length="1" expressionLanguage="COLUMN_ENGINE">
+        <formula>''</formula>
+      </calculatedViewAttribute>
+      <calculatedViewAttribute id="CA_FILTRO" datatype="NVARCHAR" length="1" expressionLanguage="COLUMN_ENGINE">
+        <formula>jf('$$P_DIRECT$$'='3','X',jf(&quot;DIRECT&quot;='$$P_DIRECT$$','X',''))</formula>
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
+    <input node="J_NFDOCTO_ITEM"/>
+    <filter>&quot;DT_E_S&quot;&gt;='$$P_DT_INI$$' and
+&quot;DT_E_S&quot;&lt;='$$P_DT_FIN$$' and
+&quot;CA_FILTRO&quot; = 'X' and
+&quot;CANCELADO&quot; != 'X' and
+&quot;DOCSTAT&quot; = '1'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="J_DOCTO_EMP_FILIAL" cardinality="C1_N" joinType="inner">
+    <viewAttributes>
+      <viewAttribute id="MANDT_TDF"/>
+      <viewAttribute id="MANDT"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="FILIAL"/>
+      <viewAttribute id="NF_ID"/>
+      <viewAttribute id="NUM_DOC"/>
+      <viewAttribute id="SER"/>
+      <viewAttribute id="DT_DOC"/>
+      <viewAttribute id="DT_E_S"/>
+      <viewAttribute id="COD_PART"/>
+      <viewAttribute id="TIPO_PART"/>
+      <viewAttribute id="CFOP"/>
+      <viewAttribute id="VL_ITEM"/>
+      <viewAttribute id="DIRECT"/>
+      <viewAttribute id="NUM_REF_LANCTO"/>
+      <viewAttribute hidden="true" id="JOIN$EMPRESA$EMPRESA"/>
+      <viewAttribute hidden="true" id="JOIN$ESTABELECIMENTO$FILIAL"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="J_EMP_FILIAL">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MANDT_TDF" source="MANDT_TDF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MANDT" source="MANDT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$EMPRESA$EMPRESA" source="EMPRESA"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$ESTABELECIMENTO$FILIAL" source="ESTABELECIMENTO"/>
+    </input>
+    <input node="P_NF_DOC_ITEM">
+      <mapping xsi:type="Calculation:AttributeMapping" target="EMPRESA" source="EMPRESA"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FILIAL" source="FILIAL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NF_ID" source="NF_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUM_DOC" source="NUM_DOC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SER" source="SER"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DT_DOC" source="DT_DOC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DT_E_S" source="DT_E_S"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COD_PART" source="COD_PART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIPO_PART" source="TIPO_PART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CFOP" source="CFOP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VL_ITEM" source="VL_ITEM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DIRECT" source="DIRECT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUM_REF_LANCTO" source="NUM_REF_LANCTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MANDT_TDF" source="MANDT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$EMPRESA$EMPRESA" source="EMPRESA"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$ESTABELECIMENTO$FILIAL" source="FILIAL"/>
+    </input>
+    <joinAttribute name="MANDT_TDF"/>
+    <joinAttribute name="JOIN$EMPRESA$EMPRESA"/>
+    <joinAttribute name="JOIN$ESTABELECIMENTO$FILIAL"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="P_CODE_TYPE_IRF" filterExpressionLanguage="COLUMN_ENGINE">
+    <viewAttributes>
+      <viewAttribute id="ITEM_INCENTIVO"/>
+      <viewAttribute id="CODIGO_IRF"/>
+      <viewAttribute id="CAT_IMPOSTO"/>
+      <viewAttribute id="VIG_DE"/>
+      <viewAttribute id="VIG_ATE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="adejo.table::CODTIPO">
+      <mapping xsi:type="Calculation:AttributeMapping" target="VIG_DE" source="DT_INI"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VIG_ATE" source="DT_FIN"/>
+    </input>
+    <filter>&quot;VIG_DE&quot; &lt;= '$$P_DT_INI$$' and
+&quot;VIG_ATE&quot; &gt;= '$$P_DT_FIN$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="P_NF_IMP_RET" filterExpressionLanguage="COLUMN_ENGINE">
+    <viewAttributes>
+      <viewAttribute id="CH_REF"/>
+      <viewAttribute id="NUM_LCTO"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="ESTABELECIMENTO"/>
+      <viewAttribute id="EXERCICIO"/>
+      <viewAttribute id="CODIGO_IRF"/>
+      <viewAttribute id="CAT_IMPOSTO"/>
+      <viewAttribute id="VL_IRF"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="adejo.view::NF_IMPOSTO_RETIDO"/>
+    <filter>&quot;VL_IRF&quot;!=0</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="J_NF_IMP_RET" cardinality="C1_N" joinType="inner">
+    <viewAttributes>
+      <viewAttribute id="CH_REF"/>
+      <viewAttribute id="NUM_LCTO"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="ESTABELECIMENTO"/>
+      <viewAttribute id="EXERCICIO"/>
+      <viewAttribute id="CODIGO_IRF"/>
+      <viewAttribute id="CAT_IMPOSTO"/>
+      <viewAttribute id="VL_IRF"/>
+      <viewAttribute id="ITEM_INCENTIVO"/>
+      <viewAttribute hidden="true" id="JOIN$CODIGO_IRF$CODIGO_IRF"/>
+      <viewAttribute hidden="true" id="JOIN$CAT_IMPOSTO$CAT_IMPOSTO"/>
+    </viewAttributes>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="VL_FUNRURAL" datatype="DECIMAL" length="25" scale="6" expressionLanguage="COLUMN_ENGINE">
+        <formula>jf(&quot;ITEM_INCENTIVO&quot;='FUNRURAL',&quot;VL_IRF&quot;,0)</formula>
+      </calculatedViewAttribute>
+      <calculatedViewAttribute id="VL_SENAR" datatype="DECIMAL" length="25" scale="6" expressionLanguage="COLUMN_ENGINE">
+        <formula>jf(&quot;ITEM_INCENTIVO&quot;='SENAR',&quot;VL_IRF&quot;,0)</formula>
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
+    <input node="P_CODE_TYPE_IRF">
+      <mapping xsi:type="Calculation:AttributeMapping" target="ITEM_INCENTIVO" source="ITEM_INCENTIVO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CODIGO_IRF$CODIGO_IRF" source="CODIGO_IRF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CAT_IMPOSTO$CAT_IMPOSTO" source="CAT_IMPOSTO"/>
+    </input>
+    <input node="P_NF_IMP_RET">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CH_REF" source="CH_REF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUM_LCTO" source="NUM_LCTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="EMPRESA" source="EMPRESA"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ESTABELECIMENTO" source="ESTABELECIMENTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="EXERCICIO" source="EXERCICIO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CODIGO_IRF" source="CODIGO_IRF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CAT_IMPOSTO" source="CAT_IMPOSTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VL_IRF" source="VL_IRF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CODIGO_IRF$CODIGO_IRF" source="CODIGO_IRF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CAT_IMPOSTO$CAT_IMPOSTO" source="CAT_IMPOSTO"/>
+    </input>
+    <joinAttribute name="JOIN$CODIGO_IRF$CODIGO_IRF"/>
+    <joinAttribute name="JOIN$CAT_IMPOSTO$CAT_IMPOSTO"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="A_DOCTO_EM_FILIAL">
+    <viewAttributes>
+      <viewAttribute id="MANDT_TDF"/>
+      <viewAttribute id="MANDT"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="FILIAL"/>
+      <viewAttribute id="NF_ID"/>
+      <viewAttribute id="NUM_DOC"/>
+      <viewAttribute id="SER"/>
+      <viewAttribute id="DT_DOC"/>
+      <viewAttribute id="DT_E_S"/>
+      <viewAttribute id="COD_PART"/>
+      <viewAttribute id="TIPO_PART"/>
+      <viewAttribute id="CFOP"/>
+      <viewAttribute id="VL_ITEM" aggregationType="sum"/>
+      <viewAttribute id="DIRECT"/>
+      <viewAttribute id="NUM_REF_LANCTO"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="J_DOCTO_EMP_FILIAL"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="P_DOCTO_EMP_FILIAL">
+    <viewAttributes>
+      <viewAttribute id="MANDT_TDF"/>
+      <viewAttribute id="MANDT"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="FILIAL"/>
+      <viewAttribute id="NF_ID"/>
+      <viewAttribute id="NUM_DOC"/>
+      <viewAttribute id="SER"/>
+      <viewAttribute id="DT_DOC"/>
+      <viewAttribute id="DT_E_S"/>
+      <viewAttribute id="COD_PART"/>
+      <viewAttribute id="TIPO_PART"/>
+      <viewAttribute id="CFOP"/>
+      <viewAttribute id="VL_ITEM"/>
+      <viewAttribute id="DIRECT"/>
+      <viewAttribute id="NUM_REF_LANCTO"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="A_DOCTO_EM_FILIAL"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="P_PART_PROD_RURAL">
+    <viewAttributes>
+      <viewAttribute id="MANDT"/>
+      <viewAttribute id="TIPO_PART"/>
+      <viewAttribute id="COD_PART"/>
+      <viewAttribute id="NOME"/>
+      <viewAttribute id="CNPJ"/>
+      <viewAttribute id="CPF"/>
+      <viewAttribute id="UF"/>
+      <viewAttribute id="DESC_MUN"/>
+      <viewAttribute id="ICMSTAXPAY"/>
+    </viewAttributes>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="CA_CNPJ_CPF" datatype="NVARCHAR" length="14" expressionLanguage="COLUMN_ENGINE">
+        <formula>jf(&quot;CNPJ&quot;='',jf(&quot;CPF&quot;='','',&quot;CPF&quot;),&quot;CNPJ&quot;)</formula>
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
+    <input node="CV_PART_PROD_RURAL"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="J_DOCTO_PART" cardinality="CN_N" joinType="rightOuter">
+    <viewAttributes>
+      <viewAttribute id="MANDT_TDF"/>
+      <viewAttribute id="MANDT"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="FILIAL"/>
+      <viewAttribute id="NF_ID"/>
+      <viewAttribute id="NUM_DOC"/>
+      <viewAttribute id="SER"/>
+      <viewAttribute id="DT_DOC"/>
+      <viewAttribute id="DT_E_S"/>
+      <viewAttribute id="COD_PART"/>
+      <viewAttribute id="TIPO_PART"/>
+      <viewAttribute id="CFOP"/>
+      <viewAttribute id="VL_ITEM"/>
+      <viewAttribute id="DIRECT"/>
+      <viewAttribute id="NUM_REF_LANCTO"/>
+      <viewAttribute id="NOME"/>
+      <viewAttribute id="UF"/>
+      <viewAttribute id="DESC_MUN"/>
+      <viewAttribute id="ICMSTAXPAY"/>
+      <viewAttribute id="CA_CNPJ_CPF"/>
+      <viewAttribute hidden="true" id="JOIN$MANDT$MANDT_TDF"/>
+      <viewAttribute hidden="true" id="JOIN$COD_PART$COD_PART"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="P_PART_PROD_RURAL">
+      <mapping xsi:type="Calculation:AttributeMapping" target="NOME" source="NOME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="UF" source="UF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DESC_MUN" source="DESC_MUN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ICMSTAXPAY" source="ICMSTAXPAY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CA_CNPJ_CPF" source="CA_CNPJ_CPF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$MANDT$MANDT_TDF" source="MANDT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$COD_PART$COD_PART" source="COD_PART"/>
+    </input>
+    <input node="P_DOCTO_EMP_FILIAL">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MANDT_TDF" source="MANDT_TDF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MANDT" source="MANDT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="EMPRESA" source="EMPRESA"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FILIAL" source="FILIAL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NF_ID" source="NF_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUM_DOC" source="NUM_DOC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SER" source="SER"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DT_DOC" source="DT_DOC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DT_E_S" source="DT_E_S"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COD_PART" source="COD_PART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIPO_PART" source="TIPO_PART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CFOP" source="CFOP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VL_ITEM" source="VL_ITEM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DIRECT" source="DIRECT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUM_REF_LANCTO" source="NUM_REF_LANCTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$MANDT$MANDT_TDF" source="MANDT_TDF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$COD_PART$COD_PART" source="COD_PART"/>
+    </input>
+    <joinAttribute name="JOIN$MANDT$MANDT_TDF"/>
+    <joinAttribute name="JOIN$COD_PART$COD_PART"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="A_NF_IMP_RET">
+    <viewAttributes>
+      <viewAttribute id="CH_REF"/>
+      <viewAttribute id="NUM_LCTO"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="ESTABELECIMENTO"/>
+      <viewAttribute id="EXERCICIO"/>
+      <viewAttribute id="VL_FUNRURAL" aggregationType="sum"/>
+      <viewAttribute id="VL_SENAR" aggregationType="sum"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="J_NF_IMP_RET"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="P_A_NF_IMP_RET">
+    <viewAttributes>
+      <viewAttribute id="CH_REF"/>
+      <viewAttribute id="NUM_LCTO"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="ESTABELECIMENTO"/>
+      <viewAttribute id="EXERCICIO"/>
+      <viewAttribute id="VL_FUNRURAL"/>
+      <viewAttribute id="VL_SENAR"/>
+    </viewAttributes>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="CA_VL_TOT_FUN_SEN" datatype="DECIMAL" length="26" scale="6" expressionLanguage="COLUMN_ENGINE">
+        <formula>&quot;VL_FUNRURAL&quot;+&quot;VL_SENAR&quot;</formula>
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
+    <input node="A_NF_IMP_RET"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="J_DOCTO_CFOP" cardinality="CN_N" joinType="inner">
+    <viewAttributes>
+      <viewAttribute id="MANDT_TDF"/>
+      <viewAttribute id="MANDT"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="FILIAL"/>
+      <viewAttribute id="NF_ID"/>
+      <viewAttribute id="NUM_DOC"/>
+      <viewAttribute id="SER"/>
+      <viewAttribute id="DT_DOC"/>
+      <viewAttribute id="DT_E_S"/>
+      <viewAttribute id="COD_PART"/>
+      <viewAttribute id="CFOP"/>
+      <viewAttribute id="VL_ITEM"/>
+      <viewAttribute id="DIRECT"/>
+      <viewAttribute id="NUM_REF_LANCTO"/>
+      <viewAttribute id="NOME"/>
+      <viewAttribute id="UF"/>
+      <viewAttribute id="DESC_MUN"/>
+      <viewAttribute id="ICMSTAXPAY"/>
+      <viewAttribute id="CA_CNPJ_CPF"/>
+      <viewAttribute id="CH_REF"/>
+      <viewAttribute id="NUM_LCTO"/>
+      <viewAttribute id="VL_FUNRURAL"/>
+      <viewAttribute id="VL_SENAR"/>
+      <viewAttribute id="CA_VL_TOT_FUN_SEN"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="J_DOCTO_PART">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MANDT_TDF" source="MANDT_TDF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MANDT" source="MANDT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="EMPRESA" source="EMPRESA"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FILIAL" source="FILIAL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NF_ID" source="NF_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUM_DOC" source="NUM_DOC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SER" source="SER"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DT_DOC" source="DT_DOC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DT_E_S" source="DT_E_S"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COD_PART" source="COD_PART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CFOP" source="CFOP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VL_ITEM" source="VL_ITEM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DIRECT" source="DIRECT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUM_REF_LANCTO" source="NUM_REF_LANCTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NOME" source="NOME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="UF" source="UF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DESC_MUN" source="DESC_MUN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ICMSTAXPAY" source="ICMSTAXPAY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CA_CNPJ_CPF" source="CA_CNPJ_CPF"/>
+    </input>
+    <input node="P_A_NF_IMP_RET">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CH_REF" source="CH_REF"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUM_LCTO" source="NUM_LCTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VL_FUNRURAL" source="VL_FUNRURAL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VL_SENAR" source="VL_SENAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CA_VL_TOT_FUN_SEN" source="CA_VL_TOT_FUN_SEN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUM_REF_LANCTO" source="CH_REF"/>
+    </input>
+    <joinAttribute name="NUM_REF_LANCTO"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="A_DOCTOS">
+    <viewAttributes>
+      <viewAttribute id="MANDT_TDF"/>
+      <viewAttribute id="MANDT"/>
+      <viewAttribute id="EMPRESA"/>
+      <viewAttribute id="FILIAL"/>
+      <viewAttribute id="NF_ID"/>
+      <viewAttribute id="NUM_DOC"/>
+      <viewAttribute id="SER"/>
+      <viewAttribute id="DT_DOC"/>
+      <viewAttribute id="DT_E_S"/>
+      <viewAttribute id="COD_PART"/>
+      <viewAttribute id="CFOP"/>
+      <viewAttribute id="VL_ITEM" aggregationType="sum"/>
+      <viewAttribute id="DIRECT"/>
+      <viewAttribute id="NUM_REF_LANCTO"/>
+      <viewAttribute id="NOME"/>
+      <viewAttribute id="UF"/>
+      <viewAttribute id="DESC_MUN"/>
+      <viewAttribute id="ICMSTAXPAY"/>
+      <viewAttribute id="CA_CNPJ_CPF"/>
+      <viewAttribute id="NUM_LCTO"/>
+      <viewAttribute id="VL_FUNRURAL" aggregationType="sum"/>
+      <viewAttribute id="VL_SENAR" aggregationType="sum"/>
+      <viewAttribute id="CA_VL_TOT_FUN_SEN" aggregationType="sum"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="J_DOCTO_CFOP"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="A_DOCTOS">
+  <attributes>
+    <attribute id="MANDT_TDF" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="MANDT_TDF"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="MANDT_TDF"/>
+    </attribute>
+    <attribute id="EMPRESA" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="EMPRESA"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="EMPRESA"/>
+    </attribute>
+    <attribute id="FILIAL" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="FILIAL"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="FILIAL"/>
+    </attribute>
+    <attribute id="NF_ID" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="NF_ID"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="NF_ID"/>
+    </attribute>
+    <attribute id="NUM_DOC" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="NUM_DOC"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="NUM_DOC"/>
+    </attribute>
+    <attribute id="SER" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SER"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="SER"/>
+    </attribute>
+    <attribute id="DT_DOC" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DT_DOC"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="DT_DOC"/>
+    </attribute>
+    <attribute id="DT_E_S" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DT_E_S"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="DT_E_S"/>
+    </attribute>
+    <attribute id="COD_PART" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="COD_PART"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="COD_PART"/>
+    </attribute>
+    <attribute id="CFOP" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CFOP"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="CFOP"/>
+    </attribute>
+    <attribute id="VL_ITEM" order="11" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VL_ITEM"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="VL_ITEM"/>
+    </attribute>
+    <attribute id="DIRECT" order="12" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DIRECT"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="DIRECT"/>
+    </attribute>
+    <attribute id="NUM_REF_LANCTO" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="NUM_REF_LANCTO"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="NUM_REF_LANCTO"/>
+    </attribute>
+    <attribute id="NOME" order="14" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="NOME"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="NOME"/>
+    </attribute>
+    <attribute id="UF" order="15" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="UF"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="UF"/>
+    </attribute>
+    <attribute id="DESC_MUN" order="16" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DESC_MUN"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="DESC_MUN"/>
+    </attribute>
+    <attribute id="ICMSTAXPAY" order="17" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ICMSTAXPAY"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="ICMSTAXPAY"/>
+    </attribute>
+    <attribute id="CA_CNPJ_CPF" order="18" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CA_CNPJ_CPF"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="CA_CNPJ_CPF"/>
+    </attribute>
+    <attribute id="NUM_LCTO" order="19" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="NUM_LCTO"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="NUM_LCTO"/>
+    </attribute>
+    <attribute id="VL_FUNRURAL" order="20" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VL_FUNRURAL"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="VL_FUNRURAL"/>
+    </attribute>
+    <attribute id="VL_SENAR" order="21" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VL_SENAR"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="VL_SENAR"/>
+    </attribute>
+    <attribute id="CA_VL_TOT_FUN_SEN" order="22" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CA_VL_TOT_FUN_SEN"/>
+      <keyMapping columnObjectName="A_DOCTOS" columnName="CA_VL_TOT_FUN_SEN"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="548" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="P_VIGENCIA" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="107" y="1226"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="J_EMP_FILIAL" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="107" y="1086"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="adejo.view::/TMF/V_EMP_FED" modelObjectNameSpace="J_EMP_FILIAL" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="235"/>
+    </shape>
+    <shape modelObjectName="P_VIGENCIA" modelObjectNameSpace="J_EMP_FILIAL" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="145"/>
+    </shape>
+    <shape expanded="true" modelObjectName="J_NFDOCTO_ITEM" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="331" y="1226"/>
+      <rectangleSize height="30" width="243"/>
+    </shape>
+    <shape modelObjectName="adejo.view::/TMF/V_NF_DOC" modelObjectNameSpace="J_NFDOCTO_ITEM" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="228"/>
+    </shape>
+    <shape modelObjectName="adejo.view::NF_ITEM" modelObjectNameSpace="J_NFDOCTO_ITEM" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="184"/>
+    </shape>
+    <shape expanded="true" modelObjectName="P_NF_DOC_ITEM" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="327" y="1094"/>
+      <rectangleSize height="30" width="251"/>
+    </shape>
+    <shape expanded="true" modelObjectName="J_DOCTO_EMP_FILIAL" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="92" y="926"/>
+      <rectangleSize height="30" width="287"/>
+    </shape>
+    <shape modelObjectName="J_EMP_FILIAL" modelObjectNameSpace="J_DOCTO_EMP_FILIAL" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="17" y="28"/>
+      <rectangleSize width="192"/>
+    </shape>
+    <shape modelObjectName="P_NF_DOC_ITEM" modelObjectNameSpace="J_DOCTO_EMP_FILIAL" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="189"/>
+    </shape>
+    <shape expanded="true" modelObjectName="P_CODE_TYPE_IRF" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="486" y="926"/>
+      <rectangleSize height="30" width="260"/>
+    </shape>
+    <shape expanded="true" modelObjectName="P_NF_IMP_RET" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="796" y="926"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="J_NF_IMP_RET" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="563" y="766"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="P_CODE_TYPE_IRF" modelObjectNameSpace="J_NF_IMP_RET" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="178"/>
+    </shape>
+    <shape modelObjectName="P_NF_IMP_RET" modelObjectNameSpace="J_NF_IMP_RET" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="192"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="A_DOCTO_EM_FILIAL" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="109" y="784"/>
+      <rectangleSize height="30" width="251"/>
+    </shape>
+    <shape expanded="true" modelObjectName="P_DOCTO_EMP_FILIAL" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="121" y="641"/>
+      <rectangleSize height="30" width="227"/>
+    </shape>
+    <shape expanded="true" modelObjectName="P_PART_PROD_RURAL" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="398" y="641"/>
+      <rectangleSize height="30" width="220"/>
+    </shape>
+    <shape expanded="true" modelObjectName="J_DOCTO_PART" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="181" y="481"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="P_PART_PROD_RURAL" modelObjectNameSpace="J_DOCTO_PART" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="200"/>
+    </shape>
+    <shape modelObjectName="P_DOCTO_EMP_FILIAL" modelObjectNameSpace="J_DOCTO_PART" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="198"/>
+    </shape>
+    <shape expanded="true" modelObjectName="A_NF_IMP_RET" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="668" y="641"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="P_A_NF_IMP_RET" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="592" y="499"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="J_DOCTO_CFOP" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="520" y="341"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="J_DOCTO_PART" modelObjectNameSpace="J_DOCTO_CFOP" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="189"/>
+    </shape>
+    <shape modelObjectName="P_A_NF_IMP_RET" modelObjectNameSpace="J_DOCTO_CFOP" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="206"/>
+    </shape>
+    <shape expanded="true" modelObjectName="A_DOCTOS" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="520" y="236"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>
