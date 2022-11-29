@@ -18,6 +18,8 @@ sap.ui.define(['sap/ui/core/UIComponent',
 				UIComponent.prototype.init.apply(this, arguments);
 				sap.ui.getCore().getConfiguration().setLanguage("pt-BR");
 				jQuery.sap.includeStyleSheet("css/style.css");
+				
+			
 
 				var xhttp = new XMLHttpRequest();
 				var view = this;

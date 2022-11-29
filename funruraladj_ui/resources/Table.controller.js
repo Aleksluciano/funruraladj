@@ -7,7 +7,7 @@ sap.ui.define([
 	'sap/m/MessageToast'
 ], function (BaseController, oData, JSONModel, MessageBox, utils, MessageToast) {
 	"use strict";
-	const oData2 = utils.deepClone(oData);
+	let oData2 = utils.deepClone(oData);
 	return BaseController.extend("funruraladj_ui.Table", {
 		onInit: function () {
 
@@ -205,6 +205,7 @@ sap.ui.define([
 			}
 		},
 		add: function () {
+			oData2 = utils.deepClone(oData);
 			var month = (new Date().getMonth() + 1).toString();
 			var year = (new Date().getFullYear()).toString();
 

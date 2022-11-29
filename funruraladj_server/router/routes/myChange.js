@@ -51,41 +51,42 @@ FROM "CV_FUNRURAL"
 	placeholder."$$P_DIRECT$$"=> '${direct}', 
 	placeholder."$$P_MANDT_TDF$$"=> '${v_emp_fed_table[0].MANDT_TDF}')`;
 			console.log(query_select_funrural);
-			let v_funfural_table = await client.exec(query_select_funrural);
-			console.log(v_funfural_table);
-			for (const v_funrural of v_funfural_table) {
+			let v_funrural_table = await client.exec(query_select_funrural);
+			console.log(v_funrural_table);
+			for (const v_funrural of v_funrural_table) {
+
 				let vl_item = 0;
 				let vl_senar = 0;
 				let vl_funrural = 0;
 				let vl_tot_fun_sen = 0;
 
-				vl_item = parseFloat(v_funrural.VL_ITEM).toFixed(6);
-				vl_senar = parseFloat(v_funrural.VL_SENAR).toFixed(6);
-				vl_funrural = parseFloat(v_funrural.VL_FUNRURAL).toFixed(6);
-				vl_tot_fun_sen = parseFloat(v_funrural.CA_VL_TOT_FUN_SEN).toFixed(6);
+				vl_item = parseFloat(v_funrural.VL_ITEM);
+				vl_senar = parseFloat(v_funrural.VL_SENAR)
+				vl_funrural = parseFloat(v_funrural.VL_FUNRURAL)
+				vl_tot_fun_sen = parseFloat(v_funrural.CA_VL_TOT_FUN_SEN)
 
 				if (direct == '3') {
 					console.log("igual 3");
 					if (v_funrural.DIRECT == '2') {
-						vl_item = (parseFloat(v_funrural.VL_ITEM) * (-1)).toFixed(6);
-						v_funrural.VL_ITEM = val_item.toString();
+						vl_item = parseFloat(v_funrural.VL_ITEM) * (-1);
+						v_funrural.VL_ITEM = vl_item;
 					}
 				}
 
 				if (resultSum[v_funrural.COD_PART]) {
-					vl_item = vl_item + parseFloat(resultSum[v_funrural.COD_PART].VL_ITEM).toFixed(6);
-					vl_senar = vl_senar + parseFloat(v_funrural.VL_SENAR).toFixed(6);
-					vl_funrural = vl_funrural + parseFloat(v_funrural.VL_FUNRURAL).toFixed(6);
-					vl_tot_fun_sen = vl_tot_fun_sen + parseFloat(v_funrural.CA_VL_TOT_FUN_SEN).toFixed(6);
+					vl_item = parseFloat(vl_item) + parseFloat(resultSum[v_funrural.COD_PART].VL_ITEM);
+					vl_senar = parseFloat(vl_senar) + parseFloat(resultSum[v_funrural.COD_PART].VL_SENAR);
+					vl_funrural = parseFloat(vl_funrural) + parseFloat(resultSum[v_funrural.COD_PART].VL_FUNRURAL);
+					vl_tot_fun_sen = parseFloat(vl_tot_fun_sen) + parseFloat(resultSum[v_funrural.COD_PART].CA_VL_TOT_FUN_SEN);
 				}
 
 				resultSum[v_funrural.COD_PART] = {
 					COD_PART: v_funrural.COD_PART,
 					NOME: v_funrural.NOME,
-					VL_ITEM: vl_item.toString(),
-					VL_SENAR: vl_senar.toString(),
-					VL_FUNRURAL: vl_funrural.toString(),
-					CA_VL_TOT_FUN_SEN: vl_tot_fun_sen.toString()
+					VL_ITEM: vl_item.toFixed(6),
+					VL_SENAR: vl_senar.toFixed(6),
+					VL_FUNRURAL: vl_funrural.toFixed(6),
+					CA_VL_TOT_FUN_SEN: vl_tot_fun_sen.toFixed(6)
 				}
 
 				item++;

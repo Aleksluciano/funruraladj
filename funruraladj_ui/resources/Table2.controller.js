@@ -7,8 +7,8 @@ sap.ui.define([
 	'sap/m/MessageToast'
 ], function (BaseController, oData, JSONModel, MessageBox, utils, MessageToast) {
 	"use strict";
-	const oData2 = utils.deepClone(oData);
-	return BaseController.extend("funruraladj_ui.Table", {
+	let oData2 = utils.deepClone(oData);
+	return BaseController.extend("funruraladj_ui.Table2", {
 		onInit: function () {
 
 			var xhttp = new XMLHttpRequest();
@@ -22,7 +22,7 @@ sap.ui.define([
 					var response = JSON.parse(this.responseText);
 					var codtipo = {
 						CODTIPO: response.codtipo
-					}
+					};
 					var oModelCodtipo = new JSONModel(codtipo);
 					view.byId('tableCodtipo').setModel(oModelCodtipo);
 
@@ -186,6 +186,7 @@ sap.ui.define([
 			}
 		},
 		add: function () {
+			oData2 = utils.deepClone(oData);
 			var month = (new Date().getMonth() + 1).toString();
 			var year = (new Date().getFullYear()).toString();
 

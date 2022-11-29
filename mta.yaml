@@ -1,6 +1,6 @@
 ID: funruraladj
 _schema-version: '2.1'
-version: 0.0.1
+version: 0.0.3
 
 modules:
   - name: funruraladj_ui
@@ -46,15 +46,6 @@ modules:
         properties:
           key: ServiceName_1
           service: '~{the-service-name}'
-  
-      - name: cross-container-service-2
-        group: SERVICE_REPLACEMENTS
-
-        properties:
-          key: ServiceName_2
-          service: ~{the-service-name}
-                            
-
 
   - name: funruraladj_server
     type: nodejs
@@ -104,10 +95,4 @@ resources:
     type: configuration
 
 
-  - name: cross-container-service-2
-    parameters:
-       service-name: CROSS_SCHEMA_ACCESS
-    properties:
-       the-service-name: ${service-name}
-    type: org.cloudfoundry.existing-service
 

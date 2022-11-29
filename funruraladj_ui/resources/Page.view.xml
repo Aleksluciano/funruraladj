@@ -49,6 +49,7 @@
 						</content>
 					</Panel>
 					<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
+						<Button id="BtnExcel1" type="Accept" text="XLS Detalhe" press=".onExcel1" enabled="false"/>
 						<ScrollContainer>
 							<content>
 								<Table items="{ path: '/ALV1'}" id="tableAlv1" fixedLayout="false">
@@ -152,6 +153,7 @@
 							</content>
 						</ScrollContainer>
 						<ScrollContainer>
+							<Button id="BtnExcel2" type="Accept" text="XLS Resumo" press=".onExcel2" enabled="false"/>
 							<content>
 								<Table items="{ path: '/ALV2'}" id="tableAlv2" fixedLayout="false">
 									<columns >
