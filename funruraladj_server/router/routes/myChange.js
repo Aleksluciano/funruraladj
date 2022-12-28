@@ -20,7 +20,7 @@ module.exports = () => {
 			direct
 		} = req.body;
 		const period1 = period.slice(6) + period.slice(3, 5) + '01';
-		const newdate = new Date(period.slice(6), parseFloat(period.slice(3, 5)) + 1, 0);
+		const newdate = new Date(period.slice(6), parseInt(period.slice(3, 5)), 0);
 		const period2 = period.slice(6) + period.slice(3, 5) + newdate.getDate().toString();
 
 		//validações
